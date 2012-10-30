@@ -1,0 +1,11 @@
+<resources>
+
+    <string name="app_name">Croptogram</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_crop">CropActivity</string>
+	<string name="done">Done</string>
+	<string name="cancel">Cancel</string>
+	<string name="could_not_load_file">Could not load the file</string>
+	<string name="picture_too_small">The selected picture is too small, choose another picture</string>
+</resources>
