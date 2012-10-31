@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
@@ -22,22 +23,19 @@ public class CropView extends View {
 
 	private static final String TAG = null;
 	private RectF imageRect = null;
-	private final Paint mFocusPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-	private final Paint whitePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-	private final Paint profileBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-	private final Paint profileFillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-
+	private final Paint borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+	private final Paint borderPaintBlack = new Paint(Paint.ANTI_ALIAS_FLAG);
+	
 	private RectF cropRect = null;
 
 	private int dragMode = 1;
 	private int mode = 0;
 
 	private PointF startPoint = null;
-	private Bitmap profileBitmap = null;
 	private CropStatusListener listener = null;
 	private float origWidth;
 	private float origHeight;
-
+	
 	public static interface CropStatusListener {
 		public void startedDragging();
 
@@ -64,23 +62,14 @@ public class CropView extends View {
 	}
 
 	private void initPaint() {
-		if(Build.VERSION.SDK_INT >= 11) {
-			if(isHardwareAccelerated()) {
-				setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-			}
-		}
-		mFocusPaint.setARGB(0xA0, 0x05, 0x05, 0x05);
-		whitePaint.setColor(Color.WHITE);
-		whitePaint.setStrokeWidth(2);
-		whitePaint.setStyle(Style.STROKE);
-
-		profileBorderPaint.setColor(Color.WHITE);
-		profileBorderPaint.setStrokeWidth(4);
-		profileBorderPaint.setStyle(Style.STROKE);
-
-		profileFillPaint.setColor(Color.LTGRAY);
-		profileFillPaint.setStyle(Style.FILL);
-
+		borderPaintBlack.setColor(Color.BLACK);
+		borderPaintBlack.setStrokeWidth(4);
+		borderPaintBlack.setStyle(Style.STROKE);
+		
+		borderPaint.setColor(Color.WHITE);
+		borderPaint.setStrokeWidth(4);
+		borderPaint.setStyle(Style.STROKE);
+		borderPaint.setPathEffect(new DashPathEffect(new float[] {10,20}, 0));
 	}
 
 	public RectF getCropRect() {
@@ -118,14 +107,9 @@ public class CropView extends View {
 		super.onDraw(canvas);
 		if (cropRect != null) {
 			canvas.save();
-			Path path = new Path();
-			path.addRect(cropRect, Direction.CW);
-			canvas.clipPath(path, Op.DIFFERENCE);
-			canvas.drawRect(imageRect, mFocusPaint);
-
 			canvas.restore();
-			canvas.drawRect(cropRect, whitePaint);
-
+			canvas.drawRect(cropRect, borderPaintBlack);
+			canvas.drawRect(cropRect, borderPaint);
 		}
 
 	}

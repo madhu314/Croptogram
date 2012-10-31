@@ -3,8 +3,11 @@ package com.appmogli.croptogram;
 import java.io.File;
 import java.io.IOException;
 
+import android.R.color;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -66,11 +69,15 @@ public class HomeActivity extends FragmentActivity {
 			i.putExtra(CropActivity.INTENT_KEY_CROP_TO_PATH, toPath.toString());
 			i.putExtra(CropActivity.INTENT_KEY_CROP_WIDTH, 300f);
 			i.putExtra(CropActivity.INTENT_KEY_CROP_HEIGHT, 500f);
+			imageView.setImageDrawable(new ColorDrawable(Color.GRAY));
 			startActivityForResult(i, ACTION_CROP_PICTURE);
 		}
 
 		if (returnedFromCrop) {
+			returnedFromCrop = false;
 			imageView.setImageURI(Uri.parse("file://" + cropPath));
+			cropPath = null;
+			
 		}
 	}
 
