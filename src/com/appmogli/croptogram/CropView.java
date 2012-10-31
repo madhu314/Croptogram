@@ -12,6 +12,7 @@ import android.graphics.Path.Direction;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Region.Op;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -63,6 +64,11 @@ public class CropView extends View {
 	}
 
 	private void initPaint() {
+		if(Build.VERSION.SDK_INT >= 11) {
+			if(isHardwareAccelerated()) {
+				setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+			}
+		}
 		mFocusPaint.setARGB(0xA0, 0x05, 0x05, 0x05);
 		whitePaint.setColor(Color.WHITE);
 		whitePaint.setStrokeWidth(2);

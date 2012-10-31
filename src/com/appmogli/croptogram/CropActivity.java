@@ -245,6 +245,7 @@ public class CropActivity extends Activity implements CropStatusListener {
 			}
 		}
 		Intent intent = new Intent();
+		intent.putExtra(INTENT_KEY_CROP_TO_PATH, imagePathStr);
 		setResult(RESULT_OK, intent);
 		finish();
 
@@ -255,6 +256,8 @@ public class CropActivity extends Activity implements CropStatusListener {
 		getMenuInflater().inflate(R.menu.activity_crop, menu);
 		return true;
 	}
+	
+	
 
 	@Override
 	protected void onResume() {

@@ -29,7 +29,7 @@
         <Button
             android:id="@+id/activity_crop_done_button"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_weight="0.5"
             android:background="@drawable/crop_activity_control_panel_selector"
             android:gravity="center"
@@ -44,7 +44,7 @@
         <Button
             android:id="@+id/activity_crop_cancel_button"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_weight="0.5"
             android:background="@drawable/crop_activity_control_panel_selector"
             android:gravity="center"
