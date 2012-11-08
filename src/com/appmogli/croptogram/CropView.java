@@ -21,7 +21,7 @@ import android.view.View;
 
 public class CropView extends View {
 
-	private static final String TAG = null;
+	private static final String TAG = "CropView";
 	private RectF imageRect = null;
 	private final Paint borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 	private final Paint borderPaintBlack = new Paint(Paint.ANTI_ALIAS_FLAG);
