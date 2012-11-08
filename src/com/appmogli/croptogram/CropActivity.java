@@ -203,7 +203,18 @@ public class CropActivity extends Activity implements CropStatusListener {
 			int yOffset = (int) (orig.getHeight() * percentageFromTop);
 			int width = orig.getWidth();
 			int height = (int) (cropHeight * width / cropWidth);
-			cropped = Bitmap.createBitmap(orig, 0, yOffset, width, height);
+			if(height > orig.getHeight()) {
+				float percentageFromLeft = (float) (cropRectF.left - imageRectF.left)
+						/ (float) (imageRectF.width());
+				int xOffset = (int) (orig.getWidth() * percentageFromLeft);
+				height = orig.getHeight();
+				width = (int) (cropWidth * height / cropHeight);
+				cropped = Bitmap.createBitmap(orig, xOffset, 0, width, height);
+
+			} else {
+				cropped = Bitmap.createBitmap(orig, 0, yOffset, width, height);
+			}
+			
 		} else {
 			float percentageFromLeft = (float) (cropRectF.left - imageRectF.left)
 					/ (float) (imageRectF.width());
@@ -214,7 +225,18 @@ public class CropActivity extends Activity implements CropStatusListener {
 			int xOffset = (int) (orig.getWidth() * percentageFromLeft);
 			int height = orig.getHeight();
 			int width = (int) (cropWidth * height / cropHeight);
-			cropped = Bitmap.createBitmap(orig, xOffset, 0, width, height);
+			if(width > orig.getWidth()) {
+				float percentageFromTop = (float) (cropRectF.top - imageRectF.top)
+						/ (float) (imageRectF.height());
+				int yOffset = (int) (orig.getHeight() * percentageFromTop);
+				width = orig.getWidth();
+				height = (int) (cropHeight * width / cropWidth);
+				cropped = Bitmap.createBitmap(orig, 0, yOffset, width, height);
+			} else {
+				cropped = Bitmap.createBitmap(orig, xOffset, 0, width, height);
+			}
+			
+			
 		}
 		
 		orig.recycle();

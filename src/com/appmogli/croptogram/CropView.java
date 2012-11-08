@@ -84,12 +84,27 @@ public class CropView extends View {
 		this.origWidth = width;
 		this.origHeight = height;
 		this.imageRect = rect;
-		float cropWidth = rect.width();
-		float cropHeight = rect.width() * origHeight / origWidth;
+		float cropWidth = -1;
+		float cropHeight = -1;
+		
+		
 		
 		if (origWidth < origHeight) {
 			cropHeight = rect.height();
 			cropWidth = rect.height() * origWidth / origHeight;
+			
+			if(cropWidth > rect.width()) {
+				cropWidth = rect.width();
+				cropHeight = rect.width() * origHeight / origWidth;
+			}
+		} else {
+			cropWidth = rect.width();
+			cropHeight = rect.width() * origHeight / origWidth;
+			
+			if(cropHeight > rect.height()) {
+				cropHeight = rect.height();
+				cropWidth = rect.height() * origWidth / origHeight;
+			}
 		}
 
 		

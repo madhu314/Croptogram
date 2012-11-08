@@ -15,22 +15,38 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
-public class HomeActivity extends FragmentActivity {
+public class PickAndCropActivity extends FragmentActivity {
 
 	private static final int ACTION_PICKUP_FROM_GALLERY = 1003;
 	private static final int ACTION_CROP_PICTURE = 1004;
 	private boolean returnedFromPickup;
 	private boolean returnedFromCrop;
 	private Uri pickedUri;
-	private ImageView imageView = null;
+//	private ImageView imageView = null;
 	private String cropPath;
+	
+	public final static String INENT_REQUIRED_HEIGHT = "requiredHeight";
+	public final static String INENT_REQUIRED_WIDTH = "requiredWidth";
+	
+	private float requiredWidth = -1f;
+	private float requiredHeight = -1f;
 
 	@Override
-	protected void onCreate(Bundle arg0) {
-		super.onCreate(arg0);
-		setContentView(R.layout.activity_home);
-		imageView = (ImageView) findViewById(R.id.activity_home_image);
-		pickUpAndCrop();
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		if(savedInstanceState == null) {
+			requiredHeight = getIntent().getFloatExtra(INENT_REQUIRED_HEIGHT, -1f);
+			requiredWidth = getIntent().getFloatExtra(INENT_REQUIRED_WIDTH, -1f);
+			
+			if(requiredHeight == -1f || requiredWidth == -1f) {
+				setResult(RESULT_CANCELED);
+				finish();
+			}
+			pickUpAndCrop();
+		} else {
+			requiredHeight = savedInstanceState.getFloat(INENT_REQUIRED_HEIGHT);
+			requiredWidth = savedInstanceState.getFloat(INENT_REQUIRED_WIDTH);
+		}
 	}
 
 	@Override
@@ -39,12 +55,16 @@ public class HomeActivity extends FragmentActivity {
 			if (resultCode == Activity.RESULT_OK) {
 				returnedFromPickup = true;
 				pickedUri = data.getData();
+			} else {
+				finish();
 			}
 		} else if (requestCode == ACTION_CROP_PICTURE) {
 			if (resultCode == Activity.RESULT_OK) {
 				returnedFromCrop = true;
 				cropPath = data
 						.getStringExtra(CropActivity.INTENT_KEY_CROP_TO_PATH);
+			} else {
+				finish();
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
@@ -67,17 +87,20 @@ public class HomeActivity extends FragmentActivity {
 				e.printStackTrace();
 			}
 			i.putExtra(CropActivity.INTENT_KEY_CROP_TO_PATH, toPath.toString());
-			i.putExtra(CropActivity.INTENT_KEY_CROP_WIDTH, 300f);
-			i.putExtra(CropActivity.INTENT_KEY_CROP_HEIGHT, 500f);
-			imageView.setImageDrawable(new ColorDrawable(Color.GRAY));
+			i.putExtra(CropActivity.INTENT_KEY_CROP_WIDTH, requiredWidth);
+			i.putExtra(CropActivity.INTENT_KEY_CROP_HEIGHT, requiredHeight);
+//			imageView.setImageDrawable(new ColorDrawable(Color.GRAY));
 			startActivityForResult(i, ACTION_CROP_PICTURE);
 		}
 
 		if (returnedFromCrop) {
 			returnedFromCrop = false;
-			imageView.setImageURI(Uri.parse("file://" + cropPath));
+//			imageView.setImageURI(Uri.parse("file://" + cropPath));
+			Intent i = new Intent();
+			i.setData(Uri.parse("file://" + cropPath));
+			setResult(RESULT_OK, i);
+			finish();
 			cropPath = null;
-			
 		}
 	}
 
@@ -102,6 +125,20 @@ public class HomeActivity extends FragmentActivity {
 		intent.setType("image/jpeg");
 		intent.setAction(Intent.ACTION_GET_CONTENT);
 		startActivityForResult(intent, ACTION_PICKUP_FROM_GALLERY);
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putFloat(INENT_REQUIRED_WIDTH, requiredWidth);
+		outState.putFloat(INENT_REQUIRED_HEIGHT, requiredHeight);
+		super.onSaveInstanceState(outState);
+	}
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		requiredHeight = savedInstanceState.getFloat(INENT_REQUIRED_HEIGHT);
+		requiredWidth = savedInstanceState.getFloat(INENT_REQUIRED_WIDTH);
 	}
 
 }

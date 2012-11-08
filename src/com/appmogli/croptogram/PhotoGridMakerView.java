@@ -1,19 +1,24 @@
 package com.appmogli.croptogram;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
+import android.view.MotionEvent;
 import android.view.View;
 
-public class PhotoGridMakerView extends View {
+public class PhotoGridMakerView extends View implements OnGestureListener {
 
 	private static final String TAG = "PhotoGridMakerView";
 	private final Paint borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -23,8 +28,14 @@ public class PhotoGridMakerView extends View {
 	private float originalWidth;
 	private float originalHeight;
 
-	Set<RectF> photoGrids = new HashSet<RectF>();
+	private List<RectF> photoGrids = new ArrayList<RectF>();
+	private List<RectF> translatedGrids = new ArrayList<RectF>();
+	private GestureDetector gestureDetector = null;
+	private GridTappedListener gridTappedListener = null; 
 
+	public static interface GridTappedListener {
+		public void onGridTapped(RectF rect);
+	}
 	public PhotoGridMakerView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		initPaint();
@@ -39,6 +50,8 @@ public class PhotoGridMakerView extends View {
 		super(context);
 		initPaint();
 	}
+	
+	
 
 	private void initPaint() {
 		borderPaint.setColor(Color.WHITE);
@@ -50,20 +63,30 @@ public class PhotoGridMakerView extends View {
 		
 		gridFillPaint.setColor(Color.RED);
 		gridFillPaint.setStyle(Style.FILL);
+		gestureDetector = new GestureDetector(getContext(), this);
+		
 	}
 
-	public void setCanvasDimens(float width, float height, Set<RectF> grids) {
+	public void setCanvasDimens(float width, float height, List<RectF> grids, GridTappedListener listener) {
 		this.originalWidth = width;
 		this.originalHeight = height;
 		this.photoGrids = grids;
 		photoGrids.addAll(grids);
+		this.gridTappedListener = listener;
 		invalidate();
+	}
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		return gestureDetector.onTouchEvent(event);
+		
 	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
 		// super.onDraw(canvas);
 		// draw the canvas of the required size
+		translatedGrids.clear();
 		float scaledWidth = 0;
 		float scaledHeight = 0;
 		
@@ -112,6 +135,7 @@ public class PhotoGridMakerView extends View {
 		//now draw rectangles
 		for(RectF grid : photoGrids) {
 			RectF translatedRect = translateRect(grid, rect, scaledWidth, scaledHeight);
+			translatedGrids.add(translatedRect);
 			canvas.drawRect(translatedRect, gridFillPaint);
 		}
 	}
@@ -139,7 +163,54 @@ public class PhotoGridMakerView extends View {
 		
 		return translatedRect;
 		
-		
+	}
+
+	@Override
+	public boolean onDown(MotionEvent e) {
+		return true;
+	}
+
+	@Override
+	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+			float velocityY) {
+		return true;
+	}
+
+	@Override
+	public void onLongPress(MotionEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+			float distanceY) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public void onShowPress(MotionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean onSingleTapUp(MotionEvent e) {
+		//consume this event
+		RectF tappedRect = null;
+		for(RectF rect : translatedGrids) {
+			if(rect.contains(e.getX(), e.getY())) {
+				tappedRect = rect;
+				break;
+			}
+		}
+		if(tappedRect != null) {
+			Log.d(TAG, "Rect at : " + translatedGrids.indexOf(tappedRect) + " hit ");
+			gridTappedListener.onGridTapped(photoGrids.get(translatedGrids.indexOf(tappedRect)));
+		}
+		return true;
+	}
+	
+	
 }

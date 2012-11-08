@@ -28,6 +28,12 @@
             android:label="@string/title_activity_crop" >
         </activity>
         
+        <activity
+            android:name="PickAndCropActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/title_activity_crop" >
+        </activity>
+        
          <!-- <activity
             android:name=".GridMakerActivity"
             android:configChanges="orientation|keyboardHidden"
