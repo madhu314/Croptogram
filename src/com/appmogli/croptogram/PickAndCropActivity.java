@@ -2,15 +2,23 @@ package com.appmogli.croptogram;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 
 import android.R.color;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.format.DateUtils;
+import android.text.format.Formatter;
+import android.util.TimeUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -30,6 +38,9 @@ public class PickAndCropActivity extends FragmentActivity {
 	
 	private float requiredWidth = -1f;
 	private float requiredHeight = -1f;
+	
+	private HashMap<RectF, Bitmap> bitmapCache = new HashMap<RectF, Bitmap>();
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +90,8 @@ public class PickAndCropActivity extends FragmentActivity {
 			Intent i = new Intent(this, CropActivity.class);
 			i.putExtra(CropActivity.INTENT_KEY_IMAGE_FILE_PATH,
 					Utils.getFilePathFromUri(pickedUri, this));
-			File toPath = new File(getExternalCacheDir(), "gen.jpeg");
+			SimpleDateFormat formatter = new SimpleDateFormat("yy-MM-dd-HH-mm-ss");
+			File toPath = new File(getExternalCacheDir(), formatter.format(new Date()) +  ".jpeg");
 			try {
 				toPath.createNewFile();
 			} catch (IOException e) {

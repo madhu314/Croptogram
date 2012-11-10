@@ -1,16 +1,21 @@
 package com.appmogli.croptogram;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -31,11 +36,14 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 	private List<RectF> photoGrids = new ArrayList<RectF>();
 	private List<RectF> translatedGrids = new ArrayList<RectF>();
 	private GestureDetector gestureDetector = null;
-	private GridTappedListener gridTappedListener = null; 
+	private GridTappedListener gridTappedListener = null;
 
 	public static interface GridTappedListener {
 		public void onGridTapped(RectF rect);
+
+		public Bitmap getBitmap(RectF rect);
 	}
+
 	public PhotoGridMakerView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		initPaint();
@@ -50,24 +58,23 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 		super(context);
 		initPaint();
 	}
-	
-	
 
 	private void initPaint() {
 		borderPaint.setColor(Color.WHITE);
 		borderPaint.setStrokeWidth(4);
 		borderPaint.setStyle(Style.STROKE);
-		
+
 		fillPaint.setColor(Color.BLUE);
 		fillPaint.setStyle(Style.FILL);
-		
+
 		gridFillPaint.setColor(Color.RED);
 		gridFillPaint.setStyle(Style.FILL);
 		gestureDetector = new GestureDetector(getContext(), this);
-		
+
 	}
 
-	public void setCanvasDimens(float width, float height, List<RectF> grids, GridTappedListener listener) {
+	public void setCanvasDimens(float width, float height, List<RectF> grids,
+			GridTappedListener listener) {
 		this.originalWidth = width;
 		this.originalHeight = height;
 		this.photoGrids = grids;
@@ -75,11 +82,11 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 		this.gridTappedListener = listener;
 		invalidate();
 	}
-	
+
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		return gestureDetector.onTouchEvent(event);
-		
+
 	}
 
 	@Override
@@ -89,38 +96,36 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 		translatedGrids.clear();
 		float scaledWidth = 0;
 		float scaledHeight = 0;
-		
+
 		float viewWidth = getRight() - getLeft();
 		float viewHeight = getBottom() - getTop();
-		
-		if(originalWidth == 0) {
+
+		if (originalWidth == 0) {
 			originalWidth = getRight() - getLeft();
 		}
-		
-		if(originalHeight == 0) {
+
+		if (originalHeight == 0) {
 			originalHeight = getBottom() - getTop();
 		}
-		
+
 		if (originalWidth > originalHeight) {
 			// landscape canvas
 			// scale the canvas width and height
 			scaledWidth = getRight() - getLeft();
-			scaledHeight = scaledWidth * originalHeight
-					/ originalWidth;
-			
-			if(scaledHeight > viewHeight) {
+			scaledHeight = scaledWidth * originalHeight / originalWidth;
+
+			if (scaledHeight > viewHeight) {
 				scaledHeight = viewHeight;
 				scaledWidth = scaledHeight * originalWidth / originalHeight;
 			}
 		} else {
 			// portrait canvas
 			scaledHeight = getBottom() - getTop();
-			scaledWidth = scaledHeight * originalWidth
-					/ originalHeight;
-			
-			if(scaledWidth > viewWidth) {
+			scaledWidth = scaledHeight * originalWidth / originalHeight;
+
+			if (scaledWidth > viewWidth) {
 				scaledWidth = viewWidth;
-				scaledHeight = scaledWidth * originalHeight /originalWidth;
+				scaledHeight = scaledWidth * originalHeight / originalWidth;
 			}
 
 		}
@@ -131,38 +136,52 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 				- scaledHeight / 2f, viewCenterX + scaledWidth / 2f,
 				viewCenterY + scaledHeight / 2f);
 		canvas.drawRect(rect, fillPaint);
-		
-		//now draw rectangles
-		for(RectF grid : photoGrids) {
-			RectF translatedRect = translateRect(grid, rect, scaledWidth, scaledHeight);
+
+		//now draw rectangles or bitmaps
+		for (RectF origRect : photoGrids) {
+			
+			RectF translatedRect = translateRect(origRect, rect, scaledWidth,
+					scaledHeight);
 			translatedGrids.add(translatedRect);
 			canvas.drawRect(translatedRect, gridFillPaint);
+			
+			// get the translated rect
+			Bitmap bm = gridTappedListener.getBitmap(origRect);
+			if (bm != null) {
+				bm = Bitmap.createScaledBitmap(bm,
+						Math.round(translatedRect.width()),
+						Math.round(translatedRect.height()), true);
+				canvas.drawBitmap(bm, translatedRect.left, translatedRect.top,
+						fillPaint);
+			}
 		}
+
 	}
 
-	private RectF translateRect(RectF grid, RectF translatedOriginalRect, float scaledWidth,
-			float scaledHeight) {
+	private RectF translateRect(RectF grid, RectF translatedOriginalRect,
+			float scaledWidth, float scaledHeight) {
 		RectF translatedRect = new RectF();
-		//x are translated by width factor and y are translated by height factor
-		float widthFactor = scaledWidth /originalWidth;
-		float heightFactor = scaledHeight /originalHeight;
+		// x are translated by width factor and y are translated by height
+		// factor
+		float widthFactor = scaledWidth / originalWidth;
+		float heightFactor = scaledHeight / originalHeight;
 		translatedRect.left = grid.left * widthFactor;
 		translatedRect.right = grid.right * widthFactor;
 		translatedRect.top = grid.top * heightFactor;
 		translatedRect.bottom = grid.bottom * heightFactor;
-		
-		//now translate the origin
+
+		// now translate the origin
 		float translatedRectWidth = translatedRect.width();
 		float translatedRectHeight = translatedRect.height();
-		
+
 		translatedRect.left += translatedOriginalRect.left;
 		translatedRect.top += translatedOriginalRect.top;
-		
+
 		translatedRect.right = translatedRect.left + translatedRectWidth;
 		translatedRect.bottom = translatedRect.top + translatedRectHeight;
-		
+
 		return translatedRect;
-		
+
 	}
 
 	@Override
@@ -179,7 +198,7 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 	@Override
 	public void onLongPress(MotionEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -192,25 +211,26 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 	@Override
 	public void onShowPress(MotionEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public boolean onSingleTapUp(MotionEvent e) {
-		//consume this event
+		// consume this event
 		RectF tappedRect = null;
-		for(RectF rect : translatedGrids) {
-			if(rect.contains(e.getX(), e.getY())) {
+		for (RectF rect : translatedGrids) {
+			if (rect.contains(e.getX(), e.getY())) {
 				tappedRect = rect;
 				break;
 			}
 		}
-		if(tappedRect != null) {
-			Log.d(TAG, "Rect at : " + translatedGrids.indexOf(tappedRect) + " hit ");
-			gridTappedListener.onGridTapped(photoGrids.get(translatedGrids.indexOf(tappedRect)));
+		if (tappedRect != null) {
+			Log.d(TAG, "Rect at : " + translatedGrids.indexOf(tappedRect)
+					+ " hit ");
+			gridTappedListener.onGridTapped(photoGrids.get(translatedGrids
+					.indexOf(tappedRect)));
 		}
 		return true;
 	}
-	
-	
+
 }
