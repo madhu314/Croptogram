@@ -40,6 +40,17 @@
             android:label="@string/title_activity_crop" >
         </activity> -->
         
+        <!-- AVIARY FEATHER ENTRIES -->
+
+
+        <!-- feather activity must be defined here -->
+        <activity
+            android:name="com.aviary.android.feather.FeatherActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:hardwareAccelerated="true"
+            android:largeHeap="true"/>
+        
+        
     </application>
 
 </manifest>
