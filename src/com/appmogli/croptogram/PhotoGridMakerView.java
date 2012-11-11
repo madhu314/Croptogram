@@ -37,6 +37,7 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 	private List<RectF> translatedGrids = new ArrayList<RectF>();
 	private GestureDetector gestureDetector = null;
 	private GridTappedListener gridTappedListener = null;
+	private RectF canvasRect;
 
 	public static interface GridTappedListener {
 		public void onGridTapped(RectF rect);
@@ -60,7 +61,7 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 	}
 
 	private void initPaint() {
-		borderPaint.setColor(Color.WHITE);
+		borderPaint.setColor(Color.GREEN);
 		borderPaint.setStrokeWidth(4);
 		borderPaint.setStyle(Style.STROKE);
 
@@ -90,15 +91,14 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 	}
 
 	@Override
-	protected void onDraw(Canvas canvas) {
-		// super.onDraw(canvas);
-		// draw the canvas of the required size
+	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+		super.onSizeChanged(w, h, oldw, oldh);
 		translatedGrids.clear();
 		float scaledWidth = 0;
 		float scaledHeight = 0;
 
-		float viewWidth = getRight() - getLeft();
-		float viewHeight = getBottom() - getTop();
+		float viewWidth = w;
+		float viewHeight = h;
 
 		if (originalWidth == 0) {
 			originalWidth = getRight() - getLeft();
@@ -132,21 +132,32 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 		float viewCenterX = (getRight() + getLeft()) / 2f;
 		float viewCenterY = (getBottom() + getTop()) / 2f;
 
-		RectF rect = new RectF(viewCenterX - scaledWidth / 2f, viewCenterY
+		Log.d(TAG, "view top is:" + getTop());
+		canvasRect = new RectF(viewCenterX - scaledWidth / 2f, viewCenterY
 				- scaledHeight / 2f, viewCenterX + scaledWidth / 2f,
 				viewCenterY + scaledHeight / 2f);
-		canvas.drawRect(rect, fillPaint);
-
-		//now draw rectangles or bitmaps
 		for (RectF origRect : photoGrids) {
-			
-			RectF translatedRect = translateRect(origRect, rect, scaledWidth,
-					scaledHeight);
+			RectF translatedRect = translateRect(origRect, canvasRect,
+					scaledWidth, scaledHeight);
 			translatedGrids.add(translatedRect);
+		}
+	}
+
+	@Override
+	protected void onDraw(Canvas canvas) {
+		// super.onDraw(canvas);
+		// draw the canvas of the required size
+
+		canvas.drawRect(getLeft(), getTop(), getRight(), getBottom(), fillPaint);
+		canvas.drawRect(canvasRect, fillPaint);
+		// now draw rectangles or bitmaps
+		for (RectF translatedRect : translatedGrids) {
+
 			canvas.drawRect(translatedRect, gridFillPaint);
-			
+
 			// get the translated rect
-			Bitmap bm = gridTappedListener.getBitmap(origRect);
+			Bitmap bm = gridTappedListener.getBitmap(photoGrids
+					.get(translatedGrids.indexOf(translatedRect)));
 			if (bm != null) {
 				bm = Bitmap.createScaledBitmap(bm,
 						Math.round(translatedRect.width()),
@@ -231,6 +242,17 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 					.indexOf(tappedRect)));
 		}
 		return true;
+	}
+
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		int minw = getPaddingLeft() + getPaddingRight()
+				+ getSuggestedMinimumWidth();
+		int w = resolveSizeAndState(minw, widthMeasureSpec, 1);
+		int minh = getPaddingTop() + getPaddingBottom()
+				+ getSuggestedMinimumHeight();
+		int h = resolveSizeAndState(minh, heightMeasureSpec, 1);
+		setMeasuredDimension(w, h);
 	}
 
 }
