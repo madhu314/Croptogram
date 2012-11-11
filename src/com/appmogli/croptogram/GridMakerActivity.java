@@ -57,6 +57,9 @@ public class GridMakerActivity extends Activity implements GridTappedListener {
 
 	private Button doneButton = null;
 	private Button cancelButton = null;
+	
+	public static final String EXTRA_INTENT_GRID_STYLE = "gridStyle";
+	public static final String EXTRA_STYLE_CREATED_PATH = "styleCreatedAt";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,10 +73,15 @@ public class GridMakerActivity extends Activity implements GridTappedListener {
 		gridMakerView = (PhotoGridMakerView) findViewById(R.id.activity_grid_maker_photo_grid_view);
 		doneButton = (Button) findViewById(R.id.activity_grid_maker_done_button);
 		cancelButton = (Button) findViewById(R.id.activity_grid_maker_cancel_button);
-		TestStyles.oneToTwo(gridList);
+		ArrayList<RectF> rects = getIntent().getParcelableArrayListExtra(EXTRA_INTENT_GRID_STYLE);
+		RectF theCanvas = rects.get(0);
+		canvasWidth = theCanvas.width();
+		canvasHeight = theCanvas.height();
+		for(int i = 1; i < rects.size(); i++) {
+			gridList.add(rects.get(i));
+		}
 		gridMakerView
 				.setCanvasDimens(canvasWidth, canvasHeight, gridList, this);
-
 		if (savedInstanceState != null) {
 			reloadSavedData(savedInstanceState);
 		}
@@ -151,7 +159,9 @@ public class GridMakerActivity extends Activity implements GridTappedListener {
 
 			protected void onPostExecute(Void result) {
 				loadingDialog.dismiss();
-				setResult(RESULT_OK);
+				Intent i = new Intent();
+				i.putExtra(EXTRA_STYLE_CREATED_PATH, toPath.toString());
+				setResult(RESULT_OK, i);
 				finish();
 			};
 		}.execute();
@@ -290,6 +300,7 @@ public class GridMakerActivity extends Activity implements GridTappedListener {
 		gridMakerView.destroy();
 		doneButton.setOnClickListener(null);
 		cancelButton.setOnClickListener(null);
+		bitmapCache.clear();
 		super.onDestroy();
 
 	}

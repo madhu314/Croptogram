@@ -1,24 +1,16 @@
 package com.appmogli.croptogram;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
-import android.net.Uri;
-import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
@@ -33,6 +25,7 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 
 	private float originalWidth;
 	private float originalHeight;
+	
 
 	private List<RectF> photoGrids = new ArrayList<RectF>();
 	private List<RectF> translatedGrids = new ArrayList<RectF>();
@@ -71,8 +64,6 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 
 		gridFillPaint.setColor(Color.DKGRAY);
 		gridFillPaint.setStyle(Style.FILL);
-		gestureDetector = new GestureDetector(getContext(), this);
-		
 //		if (!isInEditMode() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 //            setLayerType(View.LAYER_TYPE_HARDWARE, null);
 //        }
@@ -85,13 +76,20 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 		this.originalHeight = height;
 		this.photoGrids = grids;
 		photoGrids.addAll(grids);
-		this.gridTappedListener = listener;
+		if(listener != null) {
+			gestureDetector = new GestureDetector(getContext(), this);
+			this.gridTappedListener = listener;
+		}
 		invalidate();
 	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		return gestureDetector.onTouchEvent(event);
+		if(gridTappedListener != null) {
+			return gestureDetector.onTouchEvent(event);
+		} else {
+			return super.onTouchEvent(event);
+		}
 
 	}
 
@@ -158,16 +156,18 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 		for (RectF translatedRect : translatedGrids) {
 
 			canvas.drawRect(translatedRect, gridFillPaint);
-
-			// get the translated rect
-			Bitmap bm = gridTappedListener.getBitmap(photoGrids
-					.get(translatedGrids.indexOf(translatedRect)));
-			if (bm != null) {
-				bm = Bitmap.createScaledBitmap(bm,
-						Math.round(translatedRect.width()),
-						Math.round(translatedRect.height()), true);
-				canvas.drawBitmap(bm, translatedRect.left, translatedRect.top,
-						fillPaint);
+			
+			if(gridTappedListener != null) {
+				// get the translated rect
+				Bitmap bm = gridTappedListener.getBitmap(photoGrids
+						.get(translatedGrids.indexOf(translatedRect)));
+				if (bm != null) {
+					bm = Bitmap.createScaledBitmap(bm,
+							Math.round(translatedRect.width()),
+							Math.round(translatedRect.height()), true);
+					canvas.drawBitmap(bm, translatedRect.left, translatedRect.top,
+							fillPaint);
+				}
 			}
 		}
 
@@ -254,6 +254,7 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 		int minh = getPaddingTop() + getPaddingBottom()
 				+ getSuggestedMinimumHeight();
 		int h = resolveSizeAndState(minh, heightMeasureSpec, 1);
+		
 		setMeasuredDimension(w, h);
 	}
 

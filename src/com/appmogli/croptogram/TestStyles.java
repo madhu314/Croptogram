@@ -15,7 +15,7 @@ public class TestStyles {
 		gridList.add(rect3);
 	}
 
-	public static final void styleTwo(List<RectF> gridList) {
+	public static final void twoThirdsEqual(List<RectF> gridList) {
 		RectF rect1 = new RectF(0, 0, 564, 315);
 		RectF rect2 = new RectF(566, 0, 851, 157);
 		RectF rect3 = new RectF(566, 159, 851, 315);
