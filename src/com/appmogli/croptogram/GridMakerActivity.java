@@ -134,6 +134,7 @@ public class GridMakerActivity extends Activity implements GridTappedListener {
 		try {
 			Bitmap bm = BitmapFactory.decodeStream(stream);
 			bitmapCache.put(rect, bm);
+			gridMakerView.invalidate();
 		} finally {
 			if(stream !=  null) {
 				try {

@@ -64,7 +64,7 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 		borderPaint.setStrokeWidth(4);
 		borderPaint.setStyle(Style.STROKE);
 
-		fillPaint.setColor(Color.BLUE);
+		fillPaint.setColor(Color.WHITE);
 		fillPaint.setStyle(Style.FILL);
 
 		gridFillPaint.setColor(Color.RED);
