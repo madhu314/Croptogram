@@ -16,6 +16,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.net.Uri;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -47,30 +48,34 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 
 	public PhotoGridMakerView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		initPaint();
+		init();
 	}
 
 	public PhotoGridMakerView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		initPaint();
+		init();
 	}
 
 	public PhotoGridMakerView(Context context) {
 		super(context);
-		initPaint();
+		init();
 	}
 
-	private void initPaint() {
-		borderPaint.setColor(Color.GREEN);
+	private void init() {
+		borderPaint.setColor(Color.WHITE);
 		borderPaint.setStrokeWidth(4);
 		borderPaint.setStyle(Style.STROKE);
 
 		fillPaint.setColor(Color.WHITE);
 		fillPaint.setStyle(Style.FILL);
 
-		gridFillPaint.setColor(Color.RED);
+		gridFillPaint.setColor(Color.DKGRAY);
 		gridFillPaint.setStyle(Style.FILL);
 		gestureDetector = new GestureDetector(getContext(), this);
+		
+//		if (!isInEditMode() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+//            setLayerType(View.LAYER_TYPE_HARDWARE, null);
+//        }
 
 	}
 
@@ -101,17 +106,17 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 		float viewHeight = h;
 
 		if (originalWidth == 0) {
-			originalWidth = getRight() - getLeft();
+			originalWidth = viewWidth;
 		}
 
 		if (originalHeight == 0) {
-			originalHeight = getBottom() - getTop();
+			originalHeight = viewHeight;
 		}
 
 		if (originalWidth > originalHeight) {
 			// landscape canvas
 			// scale the canvas width and height
-			scaledWidth = getRight() - getLeft();
+			scaledWidth = viewWidth;
 			scaledHeight = scaledWidth * originalHeight / originalWidth;
 
 			if (scaledHeight > viewHeight) {
@@ -120,7 +125,7 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 			}
 		} else {
 			// portrait canvas
-			scaledHeight = getBottom() - getTop();
+			scaledHeight = viewHeight;
 			scaledWidth = scaledHeight * originalWidth / originalHeight;
 
 			if (scaledWidth > viewWidth) {
@@ -132,7 +137,6 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 		float viewCenterX = (getRight() + getLeft()) / 2f;
 		float viewCenterY = (getBottom() + getTop()) / 2f;
 
-		Log.d(TAG, "view top is:" + getTop());
 		canvasRect = new RectF(viewCenterX - scaledWidth / 2f, viewCenterY
 				- scaledHeight / 2f, viewCenterX + scaledWidth / 2f,
 				viewCenterY + scaledHeight / 2f);
@@ -148,8 +152,8 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 		// super.onDraw(canvas);
 		// draw the canvas of the required size
 
-		canvas.drawRect(getLeft(), getTop(), getRight(), getBottom(), fillPaint);
 		canvas.drawRect(canvasRect, fillPaint);
+		canvas.drawRect(canvasRect, borderPaint);
 		// now draw rectangles or bitmaps
 		for (RectF translatedRect : translatedGrids) {
 
@@ -236,8 +240,6 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 			}
 		}
 		if (tappedRect != null) {
-			Log.d(TAG, "Rect at : " + translatedGrids.indexOf(tappedRect)
-					+ " hit ");
 			gridTappedListener.onGridTapped(photoGrids.get(translatedGrids
 					.indexOf(tappedRect)));
 		}
@@ -253,6 +255,13 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 				+ getSuggestedMinimumHeight();
 		int h = resolveSizeAndState(minh, heightMeasureSpec, 1);
 		setMeasuredDimension(w, h);
+	}
+
+	public void destroy() {
+		gestureDetector = null;
+		photoGrids.clear();
+		translatedGrids.clear();
+		gridTappedListener = null;
 	}
 
 }

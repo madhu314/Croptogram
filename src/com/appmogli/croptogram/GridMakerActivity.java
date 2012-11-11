@@ -1,6 +1,8 @@
 package com.appmogli.croptogram;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -8,15 +10,24 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
-import android.view.WindowManager;
+import android.widget.Button;
 
 import com.appmogli.croptogram.PhotoGridMakerView.GridTappedListener;
 
@@ -36,6 +47,11 @@ public class GridMakerActivity extends Activity implements GridTappedListener {
 	private Uri pickedUri;
 	private HashMap<RectF, Bitmap> bitmapCache = new HashMap<RectF, Bitmap>();
 	private HashMap<RectF, String> uriMap = new HashMap<RectF, String>();
+	private final String imageName = "collage.jpeg";
+
+	
+	private Button doneButton = null;
+	private Button cancelButton = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +59,12 @@ public class GridMakerActivity extends Activity implements GridTappedListener {
 		super.onCreate(savedInstanceState);
 		// Hide the window title.
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+		
 		setContentView(R.layout.activity_grid_maker);
 		
 		gridMakerView = (PhotoGridMakerView) findViewById(R.id.activity_grid_maker_photo_grid_view);
+		doneButton = (Button) findViewById(R.id.activity_grid_maker_done_button);
+		cancelButton = (Button) findViewById(R.id.activity_grid_maker_cancel_button);
 		RectF rect1 = new RectF(0, 0, 564, 315);
 		RectF rect2 = new RectF(566, 0, 851, 218);
 		RectF rect3 = new RectF(566, 220, 851, 315);
@@ -59,13 +76,88 @@ public class GridMakerActivity extends Activity implements GridTappedListener {
 		if(savedInstanceState != null) {
 			reloadSavedData(savedInstanceState);
 		}
-		
+		setUpButtons();
 		
 	}
 	
+	private void setUpButtons() {
+		doneButton.setOnClickListener(new OnClickListener() {
+			
+			
+			@Override
+			public void onClick(View v) {
+				File toPath = new File(getExternalCacheDir(), imageName);
+				saveImage(toPath);
+			}
+		});
+		
+		cancelButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				setResult(RESULT_CANCELED);
+				finish();
+			}
+		});
+	}
+
+	protected void saveImage(final File toPath) {
+		final ProgressDialog loadingDialog = ProgressDialog.show(this, getString(R.string.processing), getString(R.string.saving_image), true);
+		
+		new AsyncTask<Void, Void, Void>() {
+
+			@Override
+			protected Void doInBackground(Void... params) {
+				//create a bitmap with the size of canvas
+				Bitmap bm = Bitmap.createBitmap((int)canvasWidth, (int)canvasHeight, Config.ARGB_8888);
+				Canvas canvas = new Canvas(bm);
+				Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+				backgroundPaint.setColor(Color.WHITE);
+				canvas.drawRect(0, 0, bm.getWidth(), bm.getHeight(), backgroundPaint);
+				//now add images one after the other
+				for(RectF rect : gridList) {
+					if(bitmapCache.containsKey(rect)) {
+						canvas.drawBitmap(bitmapCache.get(rect), rect.left, rect.top, backgroundPaint);
+					}
+				}
+				
+				canvas.save();
+				FileOutputStream outStream = null;
+				
+				try {
+					outStream = new FileOutputStream(toPath);
+					bm.compress(CompressFormat.JPEG, 100, outStream);
+				} catch (FileNotFoundException e) {
+					//inform user
+					Log.e(TAG, "Could not save the image");
+				} finally {
+					if(outStream != null) {
+						try {
+							outStream.close();
+						} catch (IOException e) {
+							//ignore
+						}
+					}
+				}
+				
+				bm.recycle();
+				
+				return null;
+			}
+			
+			protected void onPostExecute(Void result) {
+				loadingDialog.dismiss();
+				setResult(RESULT_OK);
+				finish();
+			};
+		}.execute();
+		
+		
+		
+		
+	}
+
 	@Override
 	public void onGridTapped(RectF rect) {
-		Log.d(TAG, "rect tapped is:" + rect.toString());
 		tappedRect = rect;
 		Intent intent = new Intent(this, PickAndCropActivity.class);
 		intent.putExtra(PickAndCropActivity.INENT_REQUIRED_HEIGHT, rect.height());
@@ -163,5 +255,14 @@ public class GridMakerActivity extends Activity implements GridTappedListener {
 		}
 		
 		return bitmapCache.get(rect);
+	}
+	
+	@Override
+	protected void onDestroy() {
+		gridMakerView.destroy();
+		doneButton.setOnClickListener(null);
+		cancelButton.setOnClickListener(null);
+		super.onDestroy();
+		
 	}
 }

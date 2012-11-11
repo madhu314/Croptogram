@@ -9,4 +9,6 @@
 	<string name="could_not_load_file">Could not load the file</string>
 	<string name="picture_too_small">The selected picture is too small, choose another picture</string>
 	<string name="activity_home_menu_crop"> Crop </string>
+	<string name="processing"> Processing </string>
+	<string name="saving_image"> Saving Image </string>
 </resources>
