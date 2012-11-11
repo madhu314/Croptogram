@@ -70,12 +70,7 @@ public class GridMakerActivity extends Activity implements GridTappedListener {
 		gridMakerView = (PhotoGridMakerView) findViewById(R.id.activity_grid_maker_photo_grid_view);
 		doneButton = (Button) findViewById(R.id.activity_grid_maker_done_button);
 		cancelButton = (Button) findViewById(R.id.activity_grid_maker_cancel_button);
-		RectF rect1 = new RectF(0, 0, 564, 315);
-		RectF rect2 = new RectF(566, 0, 851, 218);
-		RectF rect3 = new RectF(566, 220, 851, 315);
-		gridList.add(rect1);
-		gridList.add(rect2);
-		gridList.add(rect3);
+		TestStyles.oneToTwo(gridList);
 		gridMakerView
 				.setCanvasDimens(canvasWidth, canvasHeight, gridList, this);
 
