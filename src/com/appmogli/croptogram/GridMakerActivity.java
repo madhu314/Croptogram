@@ -170,7 +170,7 @@ public class GridMakerActivity extends Activity implements GridTappedListener {
 			protected void onPostExecute(Void result) {
 				loadingDialog.dismiss();
 				Intent i = new Intent();
-				i.putExtra(EXTRA_STYLE_CREATED_PATH, toPath.toString());
+				i.setData(Uri.parse("file://" + toPath.toString()));
 				setResult(RESULT_OK, i);
 				finish();
 			};

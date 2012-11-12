@@ -13,44 +13,33 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".StylePickerActivity"
+            android:name="com.appmogli.croptogram.StylePickerActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_activity_crop" >
-            <intent-filter>
+            <!-- <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter> -->
         </activity>
         <activity
-            android:name=".CropActivity"
+            android:name="com.appmogli.croptogram.CropActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_activity_crop" >
         </activity>
         
         <activity
-            android:name="PickAndCropActivity"
+            android:name="com.appmogli.croptogram.PickAndCropActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_activity_crop" >
         </activity>
         
          <activity
-            android:name=".GridMakerActivity"
+            android:name="com.appmogli.croptogram.GridMakerActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_activity_crop" >
         </activity>
-        
-        <!-- AVIARY FEATHER ENTRIES -->
-
-
-        <!-- feather activity must be defined here -->
-        <activity
-            android:name="com.aviary.android.feather.FeatherActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:hardwareAccelerated="true"
-            android:largeHeap="true"/>
-        
-        
+       
     </application>
 
 </manifest>
