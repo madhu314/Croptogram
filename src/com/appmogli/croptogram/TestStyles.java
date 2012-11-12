@@ -82,6 +82,27 @@ public class TestStyles {
 		rect = new RectF(left, top, right, bottom);
 		gridList.add(rect);
 	}
+	
+	public static final void invTwoPowerGp(List<RectF> gridList) {
+		float left = 1f;
+		float top = 1f;
+		float right = 120f;
+		float bottom = 314f;
+		RectF rect = new RectF(left, top, right, bottom);
+		gridList.add(rect);
+
+		left = right + 3f;
+		right = left + 240f;
+		rect = new RectF(left, top, right, bottom);
+		gridList.add(rect);
+
+		left = right + 6f;
+		right = left + 480f;
+
+		rect = new RectF(left, top, right, bottom);
+		gridList.add(rect);
+	}
+
 
 	public static final void centeredSquare(List<RectF> gridList) {
 		float left = 0f;
@@ -155,5 +176,11 @@ public class TestStyles {
 			}
 			startLeft += 155;
 		}
+	}
+	
+	public static final void theOne(List<RectF> gridList) {
+		RectF rect = new RectF(0, 0, 851, 315);
+		gridList.add(rect);
+
 	}
 }

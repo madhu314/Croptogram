@@ -32,6 +32,8 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 	private GestureDetector gestureDetector = null;
 	private GridTappedListener gridTappedListener = null;
 	private RectF canvasRect;
+	private int viewWidth;
+	private int viewHeight;
 
 	public static interface GridTappedListener {
 		public void onGridTapped(RectF rect);
@@ -74,12 +76,22 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 			GridTappedListener listener) {
 		this.originalWidth = width;
 		this.originalHeight = height;
-		this.photoGrids = grids;
+		this.photoGrids.clear();
+		translatedGrids.clear();
 		photoGrids.addAll(grids);
 		if(listener != null) {
 			gestureDetector = new GestureDetector(getContext(), this);
 			this.gridTappedListener = listener;
 		}
+	}
+
+	public void reset(float width, float height, List<RectF> grids) {
+		this.originalWidth = width;
+		this.originalHeight = height;
+		this.photoGrids.clear();
+		translatedGrids.clear();
+		photoGrids.addAll(grids);
+		onSizeChanged(viewWidth, viewHeight, 0, 0);
 		invalidate();
 	}
 
@@ -100,8 +112,8 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 		float scaledWidth = 0;
 		float scaledHeight = 0;
 
-		float viewWidth = w;
-		float viewHeight = h;
+		viewWidth = w;
+		viewHeight = h;
 
 		if (originalWidth == 0) {
 			originalWidth = viewWidth;

@@ -1,7 +1,6 @@
 package com.appmogli.croptogram;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.content.Context;
 import android.graphics.RectF;
@@ -9,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 public class StyleListAdapter extends BaseAdapter {
 
@@ -20,6 +19,10 @@ public class StyleListAdapter extends BaseAdapter {
 
 	public StyleListAdapter(Context context) {
 		this.context = context;
+
+		ArrayList<RectF> style = new ArrayList<RectF>();
+		TestStyles.theOne(style);
+		styles.add(style);
 
 		// load styles
 		ArrayList<RectF> style1 = new ArrayList<RectF>();
@@ -34,10 +37,6 @@ public class StyleListAdapter extends BaseAdapter {
 		TestStyles.oneToNine(style3);
 		styles.add(style3);
 
-		ArrayList<RectF> style4 = new ArrayList<RectF>();
-		TestStyles.twoThirds(style4);
-		styles.add(style4);
-
 		ArrayList<RectF> style5 = new ArrayList<RectF>();
 		TestStyles.centeredSquare(style5);
 		styles.add(style5);
@@ -51,12 +50,13 @@ public class StyleListAdapter extends BaseAdapter {
 		styles.add(style7);
 
 		ArrayList<RectF> style8 = new ArrayList<RectF>();
-		TestStyles.threes(style8);
+		TestStyles.twoPowerGp(style8);
 		styles.add(style8);
-
+		
 		ArrayList<RectF> style9 = new ArrayList<RectF>();
-		TestStyles.twoPowerGp(style9);
+		TestStyles.invTwoPowerGp(style9);
 		styles.add(style9);
+
 
 	}
 
@@ -79,14 +79,26 @@ public class StyleListAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		//this is really bad, we gotta reuse the view, but for some reason our dear view is not redrawing itself
-		FrameLayout view = null;
-		view = (FrameLayout) LayoutInflater.from(context).inflate(
-				R.layout.activity_style_list_item, null);
-		PhotoGridMakerView girdMaker = (PhotoGridMakerView) view
-				.findViewById(R.id.activity_style_list_item_item);
-		girdMaker.setCanvasDimens(CANVAS_WIDTH, CANVAS_HEIGHT,
-				styles.get(position), null);
+		// this is really bad, we gotta reuse the view, but for some reason our
+		// dear view is not redrawing itself
+		LinearLayout view = null;
+		if (convertView == null) {
+			view = (LinearLayout) LayoutInflater.from(context).inflate(
+					R.layout.activity_style_list_item, null);
+			PhotoGridMakerView girdMaker = (PhotoGridMakerView) view
+					.findViewById(R.id.activity_style_list_item_item);
+			girdMaker.setCanvasDimens(CANVAS_WIDTH, CANVAS_HEIGHT,
+					styles.get(position), null);
+
+		} else {
+			view = (LinearLayout) convertView;
+			PhotoGridMakerView girdMaker = (PhotoGridMakerView) view
+					.findViewById(R.id.activity_style_list_item_item);
+			girdMaker.reset(CANVAS_WIDTH, CANVAS_HEIGHT, styles.get(position));
+
+		}
+
+		view.postInvalidate();
 		return view;
 	}
 
