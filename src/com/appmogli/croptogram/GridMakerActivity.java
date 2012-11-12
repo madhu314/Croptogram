@@ -139,6 +139,16 @@ public class GridMakerActivity extends Activity implements GridTappedListener {
 				try {
 					outStream = new FileOutputStream(toPath);
 					bm.compress(CompressFormat.JPEG, 100, outStream);
+					
+					//remove all cropped bitmaps
+					for(RectF rect : uriMap.keySet()) {
+						String uriString = uriMap.get(rect);
+						if(uriString != null) {
+							String filePath = Utils.getFilePathFromUri(Uri.parse(uriString), GridMakerActivity.this);
+							File file = new File(filePath);
+							file.delete();
+						}
+					}
 				} catch (FileNotFoundException e) {
 					// inform user
 					Log.e(TAG, "Could not save the image");
