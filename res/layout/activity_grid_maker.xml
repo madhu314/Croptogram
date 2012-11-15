@@ -1,26 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black"
     android:orientation="vertical" >
 
-    <com.appmogli.croptogram.PhotoGridMakerView
-        android:id="@+id/activity_grid_maker_photo_grid_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#000" />
-
     <LinearLayout
         android:id="@+id/activity_grid_maker_control_panel"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="36dp"
         android:orientation="horizontal" >
 
         <Button
             android:id="@+id/activity_grid_maker_done_button"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:background="@drawable/crop_activity_control_panel_selector"
             android:gravity="center"
@@ -35,7 +30,7 @@
         <Button
             android:id="@+id/activity_grid_maker_cancel_button"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:background="@drawable/crop_activity_control_panel_selector"
             android:gravity="center"
@@ -43,4 +38,30 @@
             android:textColor="#fff" />
     </LinearLayout>
 
-</FrameLayout>
+    <FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@android:color/black"
+        android:orientation="vertical" >
+
+        <com.appmogli.croptogram.PhotoGridMakerView
+            android:id="@+id/activity_grid_maker_photo_grid_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#000" />
+    </FrameLayout>
+    
+     <com.google.ads.AdView
+        android:id="@+id/adView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        ads:adSize="SMART_BANNER"
+        ads:adUnitId="a14fd5d48c02d64"
+        ads:loadAdOnCreate="true"
+        ads:testDevices="TEST_EMULATOR"
+        android:gravity="center" >
+    </com.google.ads.AdView>
+
+</LinearLayout>

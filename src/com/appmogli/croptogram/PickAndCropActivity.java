@@ -35,11 +35,11 @@ public class PickAndCropActivity extends FragmentActivity {
 	private float requiredWidth = -1f;
 	private float requiredHeight = -1f;
 
-	private HashMap<RectF, Bitmap> bitmapCache = new HashMap<RectF, Bitmap>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_pick_and_crop);
 		if (savedInstanceState == null) {
 			requiredHeight = getIntent().getFloatExtra(INENT_REQUIRED_HEIGHT,
 					-1f);
@@ -50,11 +50,11 @@ public class PickAndCropActivity extends FragmentActivity {
 				setResult(RESULT_CANCELED);
 				finish();
 			}
-			pickUpAndCrop();
 		} else {
 			requiredHeight = savedInstanceState.getFloat(INENT_REQUIRED_HEIGHT);
 			requiredWidth = savedInstanceState.getFloat(INENT_REQUIRED_WIDTH);
 		}
+		pickUpAndCrop();
 	}
 
 	@Override
@@ -114,21 +114,6 @@ public class PickAndCropActivity extends FragmentActivity {
 			cropPath = null;
 		}
 	}
-
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		getMenuInflater().inflate(R.menu.activity_home, menu);
-//		return true;
-//	}
-//
-//	@Override
-//	public boolean onOptionsItemSelected(MenuItem item) {
-//		if (item.getItemId() == R.id.activity_home_menu_crop) {
-//			pickUpAndCrop();
-//			return true;
-//		}
-//		return super.onOptionsItemSelected(item);
-//	}
 
 	private void pickUpAndCrop() {
 

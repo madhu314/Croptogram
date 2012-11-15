@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+    android:layout_width="match_parent" 
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    
+    <GridView xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:id="@+id/activity_style_picker_gridview"
+    android:layout_width="match_parent" 
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:columnWidth="120dp"
+    android:numColumns="auto_fit"
+    android:verticalSpacing="10dp"
+    android:horizontalSpacing="10dp"
+    android:stretchMode="columnWidth"
+    android:gravity="center"
+/>
+    <com.google.ads.AdView
+        android:id="@+id/adView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        ads:adSize="SMART_BANNER"
+        ads:adUnitId="a14fd5d48c02d64"
+        ads:loadAdOnCreate="true"
+        ads:testDevices="TEST_EMULATOR"
+        android:gravity="center" >
+    </com.google.ads.AdView>
+</LinearLayout>

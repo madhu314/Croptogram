@@ -258,17 +258,17 @@ public class PhotoGridMakerView extends View implements OnGestureListener {
 		return true;
 	}
 
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		int minw = getPaddingLeft() + getPaddingRight()
-				+ getSuggestedMinimumWidth();
-		int w = resolveSizeAndState(minw, widthMeasureSpec, 1);
-		int minh = getPaddingTop() + getPaddingBottom()
-				+ getSuggestedMinimumHeight();
-		int h = resolveSizeAndState(minh, heightMeasureSpec, 1);
-		
-		setMeasuredDimension(w, h);
-	}
+//	@Override
+//	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+//		int minw = getPaddingLeft() + getPaddingRight()
+//				+ getSuggestedMinimumWidth();
+//		int w = resolveSizeAndState(minw, widthMeasureSpec, 1);
+//		int minh = getPaddingTop() + getPaddingBottom()
+//				+ getSuggestedMinimumHeight();
+//		int h = resolveSizeAndState(minh, heightMeasureSpec, 1);
+//		
+//		setMeasuredDimension(w, h);
+//	}
 
 	public void destroy() {
 		gestureDetector = null;
