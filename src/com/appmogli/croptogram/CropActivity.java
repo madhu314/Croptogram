@@ -65,7 +65,7 @@ public class CropActivity extends Activity implements CropStatusListener {
 
 		setContentView(R.layout.activity_crop);
 		
-		imageView = (ImageView) findViewById(R.id.activity_crop_image_view);
+		imageView = (ImageView) findViewById(R.id.activity_crop_image);
 		cropView = (CropView) findViewById(R.id.activity_crop_crop_view);
 		controlPanel = (LinearLayout) findViewById(R.id.activity_crop_control_panel);
 		doneText = (Button) findViewById(R.id.activity_crop_done_button);
@@ -142,8 +142,6 @@ public class CropActivity extends Activity implements CropStatusListener {
 
 						@Override
 						public void onGlobalLayout() {
-							imageView.getViewTreeObserver()
-									.removeGlobalOnLayoutListener(this);
 							Matrix imageMatrix = imageView.getImageMatrix();
 							imageMatrix.getValues(matrixValues);
 							float currentY = matrixValues[Matrix.MTRANS_Y];
@@ -296,61 +294,61 @@ public class CropActivity extends Activity implements CropStatusListener {
 
 	@Override
 	public void stoppedDragging() {
-		Animation fadeIn = AnimationUtils.loadAnimation(this,
-				android.R.anim.fade_in);
-		fadeIn.setDuration(40);
-		fadeIn.setAnimationListener(new AnimationListener() {
-
-			@Override
-			public void onAnimationStart(Animation animation) {
-				// TODO Auto-generated method stub
-				controlPanel.setVisibility(View.VISIBLE);
-				controlPanelHidden = false;
-			}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void onAnimationEnd(Animation animation) {
-
-			}
-		});
-		controlPanel.startAnimation(fadeIn);
+//		Animation fadeIn = AnimationUtils.loadAnimation(this,
+//				android.R.anim.fade_in);
+//		fadeIn.setDuration(40);
+//		fadeIn.setAnimationListener(new AnimationListener() {
+//
+//			@Override
+//			public void onAnimationStart(Animation animation) {
+//				// TODO Auto-generated method stub
+//				controlPanel.setVisibility(View.VISIBLE);
+//				controlPanelHidden = false;
+//			}
+//
+//			@Override
+//			public void onAnimationRepeat(Animation animation) {
+//				// TODO Auto-generated method stub
+//
+//			}
+//
+//			@Override
+//			public void onAnimationEnd(Animation animation) {
+//
+//			}
+//		});
+//		controlPanel.startAnimation(fadeIn);
 
 	}
 
 	@Override
 	public void startedDragging() {
-		if (!controlPanelHidden) {
-			controlPanelHidden = true;
-			// if the view is visible
-			Animation fadeOut = AnimationUtils.loadAnimation(this,
-					android.R.anim.fade_out);
-			fadeOut.setDuration(40);
-			fadeOut.setAnimationListener(new AnimationListener() {
-
-				@Override
-				public void onAnimationStart(Animation animation) {
-
-				}
-
-				@Override
-				public void onAnimationRepeat(Animation animation) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void onAnimationEnd(Animation animation) {
-					controlPanel.setVisibility(View.GONE);
-				}
-			});
-			controlPanel.startAnimation(fadeOut);
-		}
+//		if (!controlPanelHidden) {
+//			controlPanelHidden = true;
+//			// if the view is visible
+//			Animation fadeOut = AnimationUtils.loadAnimation(this,
+//					android.R.anim.fade_out);
+//			fadeOut.setDuration(40);
+//			fadeOut.setAnimationListener(new AnimationListener() {
+//
+//				@Override
+//				public void onAnimationStart(Animation animation) {
+//
+//				}
+//
+//				@Override
+//				public void onAnimationRepeat(Animation animation) {
+//					// TODO Auto-generated method stub
+//
+//				}
+//
+//				@Override
+//				public void onAnimationEnd(Animation animation) {
+//					controlPanel.setVisibility(View.GONE);
+//				}
+//			});
+//			controlPanel.startAnimation(fadeOut);
+//		}
 
 	}
 	

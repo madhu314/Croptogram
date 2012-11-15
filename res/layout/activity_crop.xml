@@ -1,40 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_crop_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/activity_crop_frame" 
-    android:background="#000">
-
-    <ImageView
-        android:id="@+id/activity_crop_image_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:adjustViewBounds="true" />
-
-   <com.appmogli.croptogram.CropView
-        android:id="@+id/activity_crop_crop_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:adjustViewBounds="true" />
+    android:background="#000"
+    android:orientation="vertical"
+    xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads" >
 
     <LinearLayout
         android:id="@+id/activity_crop_control_panel"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
+        android:layout_height="36dp"
+        android:orientation="horizontal" 
+		android:background="#000"
+        >
 
         <Button
             android:id="@+id/activity_crop_done_button"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:background="@drawable/crop_activity_control_panel_selector"
             android:gravity="center"
             android:text="@string/done"
-            android:textColor="#fff"/>
+            android:textColor="#fff" />
 
         <View
             android:layout_width="1dp"
@@ -44,12 +33,41 @@
         <Button
             android:id="@+id/activity_crop_cancel_button"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:background="@drawable/crop_activity_control_panel_selector"
             android:gravity="center"
-            android:text="@string/cancel" 
-            android:textColor="#fff"/>
+            android:text="@string/cancel"
+            android:textColor="#fff" />
     </LinearLayout>
 
-</FrameLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <ImageView
+            android:id="@+id/activity_crop_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true" />
+
+        <com.appmogli.croptogram.CropView
+            android:id="@+id/activity_crop_crop_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+    </FrameLayout>
+    <com.google.ads.AdView
+        android:id="@+id/adView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        ads:adSize="SMART_BANNER"
+        ads:adUnitId="a14fd5d48c02d64"
+        ads:loadAdOnCreate="true"
+        ads:testDevices="TEST_EMULATOR"
+        android:gravity="center" >
+    </com.google.ads.AdView>
+
+</LinearLayout>
